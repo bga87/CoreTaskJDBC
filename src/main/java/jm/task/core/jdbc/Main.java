@@ -4,15 +4,13 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
 
-import java.util.List;
-
 public class Main {
     public static void main(String[] args) {
         // локальный класс, инкапсулирующий данные о пользователе
         class UserData {
-            private String name;
-            private String lastName;
-            private byte age;
+            private final String name;
+            private final String lastName;
+            private final byte age;
 
             public UserData(String name, String lastName, byte age) {
                 this.name = name;
