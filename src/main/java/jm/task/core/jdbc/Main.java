@@ -41,6 +41,14 @@ public class Main {
             System.out.println(user);
         }
 
+        System.out.println("\nУдаление пользователя по id (id=2)");
+        userService.removeUserById(2);
+
+        System.out.println("\nПолучение всех пользователей из базы данных после удаления пользователя с id=2:");
+        for (User user : userService.getAllUsers()) {
+            System.out.println(user);
+        }
+
         System.out.println("\nОчистка таблицы пользователей");
         userService.cleanUsersTable();
 
