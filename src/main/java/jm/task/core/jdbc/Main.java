@@ -52,6 +52,11 @@ public class Main {
         System.out.println("\nОчистка таблицы пользователей");
         userService.cleanUsersTable();
 
+        System.out.println("\nПолучение всех пользователей из базы данных после очистки таблицы:");
+        for (User user : userService.getAllUsers()) {
+            System.out.println(user);
+        }
+
         System.out.println("\nУдаление таблицы пользователей");
         userService.dropUsersTable();
     }
