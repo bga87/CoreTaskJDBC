@@ -4,33 +4,29 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Table;
 import java.util.Collections;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
-    private static EntityManagerFactory entityManagerFactory;
+    private EntityManager entityManager;
     private final String tableName = User.class.getAnnotation(Table.class).name();
 
     public UserDaoHibernateImpl() {
         try {
-            entityManagerFactory =  Util.getEntityManagerFactory();
+            entityManager = Util.getEntityManager();
         } catch (Exception ex) {
-            System.err.printf("При попытке соединения с БД возникла ошибка:%n");
-            System.err.println("\t==>" + ex.getMessage());
+            ex.printStackTrace();
             System.exit(1);
         }
     }
 
     @Override
     public void createUsersTable() {
-        EntityManager entityManager = null;
         EntityTransaction tx = null;
 
         try {
-            entityManager = entityManagerFactory.createEntityManager();
             tx = entityManager.getTransaction();
             tx.begin();
             entityManager.createNativeQuery(
@@ -42,20 +38,15 @@ public class UserDaoHibernateImpl implements UserDao {
             if (tx != null) {
                 tx.rollback();
             }
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
+            ex.printStackTrace();
         }
     }
 
     @Override
     public void dropUsersTable() {
-        EntityManager entityManager = null;
         EntityTransaction tx = null;
 
         try {
-            entityManager = entityManagerFactory.createEntityManager();
             tx = entityManager.getTransaction();
             tx.begin();
             entityManager.createNativeQuery("DROP TABLE IF EXISTS " + tableName + ';').executeUpdate();
@@ -64,20 +55,15 @@ public class UserDaoHibernateImpl implements UserDao {
             if (tx != null) {
                 tx.rollback();
             }
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
+            ex.printStackTrace();
         }
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        EntityManager entityManager = null;
         EntityTransaction tx = null;
 
         try {
-            entityManager = entityManagerFactory.createEntityManager();
             tx = entityManager.getTransaction();
             tx.begin();
             entityManager.persist(new User(name, lastName, age));
@@ -86,20 +72,15 @@ public class UserDaoHibernateImpl implements UserDao {
             if (tx != null) {
                 tx.rollback();
             }
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
+            ex.printStackTrace();
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        EntityManager entityManager = null;
         EntityTransaction tx = null;
 
         try {
-            entityManager = entityManagerFactory.createEntityManager();
             tx = entityManager.getTransaction();
             tx.begin();
             entityManager.remove(entityManager.getReference(User.class, id));
@@ -108,21 +89,15 @@ public class UserDaoHibernateImpl implements UserDao {
             if (tx != null) {
                 tx.rollback();
             }
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
         }
     }
 
     @Override
     public List<User> getAllUsers() {
-        EntityManager entityManager = null;
         EntityTransaction tx = null;
         List<User> result = Collections.emptyList();
 
         try {
-            entityManager = entityManagerFactory.createEntityManager();
             tx = entityManager.getTransaction();
             tx.begin();
             result = entityManager.createQuery("from User", User.class).getResultList();
@@ -131,10 +106,6 @@ public class UserDaoHibernateImpl implements UserDao {
             if (tx != null) {
                 tx.rollback();
             }
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
         }
 
         return result;
@@ -142,11 +113,9 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        EntityManager entityManager = null;
         EntityTransaction tx = null;
 
         try {
-            entityManager = entityManagerFactory.createEntityManager();
             tx = entityManager.getTransaction();
             tx.begin();
             entityManager.createQuery("delete from User").executeUpdate();
@@ -154,10 +123,6 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch (Exception ex) {
             if (tx != null) {
                 tx.rollback();
-            }
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
             }
         }
     }
